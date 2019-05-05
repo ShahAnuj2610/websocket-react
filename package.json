@@ -5,7 +5,13 @@
   "dependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.0"
+    "react-scripts": "3.0.0",
+    "react-websocket": "^2.0.1"
+  },
+  "devDependencies": {
+    "prettier": "^1.17.0",
+    "react-charts": "^2.0.0-alpha.12",
+    "lodash-es": "^4.17.11"
   },
   "scripts": {
     "start": "react-scripts start",
