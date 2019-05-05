@@ -10,8 +10,8 @@ class SearchBar extends Component {
 
 SearchBar.propTypes = {};
 
-const mapStateToProps = store => {
-  console.log({ store });
+const mapStateToProps = state => {
+  console.log({ state });
 };
 
 export default connect(mapStateToProps)(SearchBar);
