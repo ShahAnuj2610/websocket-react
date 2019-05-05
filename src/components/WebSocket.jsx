@@ -4,6 +4,8 @@ import moment from "moment";
 import Websocket from "react-websocket";
 import { Chart } from "react-charts";
 import { cloneDeep, get } from "lodash-es";
+import { connect } from "react-redux";
+import { UPDATE_GLOBAL_DATA } from "../action";
 
 class WebSocket extends Component {
   state = { data: [] };
@@ -19,23 +21,25 @@ class WebSocket extends Component {
       const currentTimeStamp = JSON.parse(data).x.time;
       const currentDataLength = filteredBTCData.length;
       const amtToAddFromPrevious = 10 - currentDataLength;
-      if (amtToAddFromPrevious <= 0)
-        this.setState({
-          data: filteredBTCData.map((data, index) => {
-            return { ...data, };
-          })
+      if (amtToAddFromPrevious <= 0) {
+        this.props.dispatch({
+          type: UPDATE_GLOBAL_DATA,
+          payload: filteredBTCData
         });
-      else {
-        const newData = cloneDeep(
-          filteredBTCData.map((data, index) => {
-            return { ...data,  };
-          })
-        );
+        return {
+          data: filteredBTCData
+        };
+      } else {
+        const newData = cloneDeep(filteredBTCData);
         for (let i = 0; i < amtToAddFromPrevious; i++) {
           if (get(prevState, ["data", i]))
             newData.push(get(prevState, ["data", i]));
         }
-        this.setState({ data: newData });
+        this.props.dispatch({
+          type: UPDATE_GLOBAL_DATA,
+          payload: newData
+        });
+        return { data: newData };
       }
     });
   };
@@ -90,4 +94,4 @@ class WebSocket extends Component {
 
 WebSocket.propTypes = {};
 
-export default WebSocket;
+export default connect()(WebSocket);
