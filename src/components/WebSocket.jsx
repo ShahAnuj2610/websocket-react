@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import moment from "moment";
 import Websocket from "react-websocket";
 import { Chart } from "react-charts";
 import { cloneDeep, get } from "lodash-es";
@@ -7,6 +8,7 @@ import { cloneDeep, get } from "lodash-es";
 class WebSocket extends Component {
   state = { data: [] };
   sendMessage(message) {
+    console.log("time", moment.unix(1557052784).format("h:mm:ss a"));
     console.log("refdff", this.refWebSocket);
     this.refWebSocket.sendMessage(message);
   }
@@ -14,11 +16,21 @@ class WebSocket extends Component {
     console.log(JSON.parse(data));
     this.setState(prevState => {
       const filteredBTCData = this.getFilteredBTC(JSON.parse(data).x.out);
+      const currentTimeStamp = JSON.parse(data).x.time;
       const currentDataLength = filteredBTCData.length;
       const amtToAddFromPrevious = 10 - currentDataLength;
-      if (amtToAddFromPrevious <= 0) this.setState({ data: filteredBTCData });
+      if (amtToAddFromPrevious <= 0)
+        this.setState({
+          data: filteredBTCData.map((data, index) => {
+            return { ...data, };
+          })
+        });
       else {
-        const newData = cloneDeep(filteredBTCData);
+        const newData = cloneDeep(
+          filteredBTCData.map((data, index) => {
+            return { ...data,  };
+          })
+        );
         for (let i = 0; i < amtToAddFromPrevious; i++) {
           if (get(prevState, ["data", i]))
             newData.push(get(prevState, ["data", i]));
@@ -28,12 +40,12 @@ class WebSocket extends Component {
     });
   };
   getFilteredBTC = (data = []) => {
-    return data.filter(item => item.value / 100000000 > 0.5);
+    return data.filter(item => item.value / 100000000 > 1);
   };
   getChartData = (data = []) => {
     console.log({ data });
-    return data.map(dataItem => {
-      return [dataItem.tx_index, dataItem.value];
+    return data.map((dataItem, index) => {
+      return [index + 1, dataItem.value];
     });
   };
   render() {
